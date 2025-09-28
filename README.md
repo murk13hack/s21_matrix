@@ -1,3 +1,4 @@
+![](images/s21_matrix_image.png)
 # s21_matrix
 ## Операции над матрицами
 - Создание матриц (create_matrix) : ```int s21_create_matrix(int rows, int columns, matrix_t *result);```

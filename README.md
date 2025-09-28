@@ -1,8 +1,10 @@
 ![](images/s21_matrix_image.png)
 # s21_matrix
 ## Операции над матрицами
-- #### Создание матриц (create_matrix) : ```int s21_create_matrix(int rows, int columns, matrix_t *result);```
-- #### Очистка матриц (remove_matrix) : ```void s21_remove_matrix(matrix_t *A);```
+- #### Создание матриц (create_matrix) :
+  ```int s21_create_matrix(int rows, int columns, matrix_t *result);```
+- #### Очистка матриц (remove_matrix) :
+  ```void s21_remove_matrix(matrix_t *A);```
 - #### Сравнение матриц (eq_matrix) :
 ```
 #define SUCCESS 1
@@ -30,7 +32,7 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
             0 0 6   3 4 1   3 4 7
 ```
 ---
-- #### Умножение матрицы на число (mult_number). Умножение двух матриц (mult_matrix) :
+- #### Умножение матрицы на число (mult_number).  Умножение двух матриц (mult_matrix) :
 ```
 int s21_mult_number(matrix_t *A, double number, matrix_t *result);
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
@@ -61,7 +63,8 @@ C(3,2) = A(3,1) × B(1,2) + A(3,2) × B(2,2) = 3 × (-1) + 6 × 3 = (-3) + 18 = 
 C(3,3) = A(3,1) × B(1,3) + A(3,2) × B(2,3) = 3 × 1 + 6 × 4 = 3 + 24 = 27			
 ```
 ---
-- #### Транспонирование матрицы (transpose) : ``` int s21_transpose(matrix_t *A, matrix_t *result); ```
+- #### Транспонирование матрицы (transpose) :
+  ``` int s21_transpose(matrix_t *A, matrix_t *result); ```
 ---
 > Транспонирование матрицы А заключается в замене строк этой матрицы ее столбцами с сохранением их номеров.
 ```
@@ -70,7 +73,8 @@ A = A^T = 2 5 = 4 5 6
           3 6
 ```
 ---
-- #### Минор матрицы и матрица алгебраических дополнений (calc_complements) : ``` int s21_calc_complements(matrix_t *A, matrix_t *result); ```
+- #### Минор матрицы и матрица алгебраических дополнений (calc_complements) :
+  ``` int s21_calc_complements(matrix_t *A, matrix_t *result); ```
 ---
 > Минором M(i,j) называется определитель (n-1)-го порядка, полученный вычёркиванием из матрицы A i-й строки и j-го столбца.
 > Для матрицы:
@@ -97,7 +101,8 @@ M. =  4 -14   8
      -8  -2   4
 ```
 ---
-- #### Определитель матрицы (determinant) : ``` int s21_determinant(matrix_t *A, double *result); ```
+- #### Определитель матрицы (determinant) :
+  ``` int s21_determinant(matrix_t *A, double *result); ```
 ---
 > Определитель (детерминант) — это число, которое ставят в соответствие каждой квадратной матрице и вычисляют из элементов по специальным формулам.
 <br> **Tip: определитель может быть вычислен только для квадратной матрицы.**
@@ -114,7 +119,8 @@ A = 4 5 6
 |A| = 0
 ```
 ---
-- #### Обратная матрица (inverse_matrix) : ``` int s21_inverse_matrix(matrix_t *A, matrix_t *result); ```
+- #### Обратная матрица (inverse_matrix) :
+  ``` int s21_inverse_matrix(matrix_t *A, matrix_t *result); ```
 ---
 > Матрицу A в степени -1 называют обратной к квадратной матрице А, если произведение этих матриц равняется единичной матрице.
 <br> Обратной матрицы не существует, если определитель равен 0.

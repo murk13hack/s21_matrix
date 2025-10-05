@@ -1,9 +1,190 @@
 # =============================================================================
+# Project Structure
+# =============================================================================
+INCLUDE_DIR = include
+SOURCE_DIR = src
+TEST_DIR = tests
+BUILD_DIR = build
+TEST_OBJ_DIR = $(BUILD_DIR)/obj/${TEST_DIR}
+TEST_BIN_DIR = $(BUILD_DIR)/bin/${TEST_DIR}
+MAIN_OBJ_DIR = $(BUILD_DIR)/obj/main
+MAIN_BIN_DIR = $(BUILD_DIR)/bin/main
+GCOV_DIR = $(BUILD_DIR)/gcov_report
+GCOV_DATA_DIR = $(GCOV_DIR)/data
+LIB_DIR = $(BUILD_DIR)/lib
+# =============================================================================
+# Creating Directories
+# =============================================================================
+$(BUILD_DIR) $(TEST_OBJ_DIR) $(TEST_BIN_DIR) $(MAIN_OBJ_DIR) $(MAIN_BIN_DIR) $(GCOV_DIR) $(LIB_DIR) $(GCOV_DATA_DIR):
+	mkdir -p $@
+
+# =============================================================================
 # Compiler Configuration
 # =============================================================================
 CC				::=		gcc
-CFLAGS			::=		-Wall -Werror -Wextra -std=c11 -pedantic -I./include -lm
+CFLAGS			::=		-Wall -Werror -Wextra -std=c11 -pedantic -I./include
+
 TST_FLAG		::=		$(shell pkg-config --cflags --libs check)
-COV_FLAGS		::=		-fprofile-arcs -ftest-coverage
+TST_CFLAGS		::=		${CFLAGS} ${TST_FLAG}
+
+GCOV_FLAGS		::=		-fprofile-arcs -ftest-coverage
+LDFLAGS 		::=     -lgcov
+
 DBG_FLAGS		::=		-g
 REL_FLAG		::=		-DNDEBUG -O2
+
+AR 				::= 	ar rcs
+RANLIB 			::= 	ranlib
+
+.PHONY: all test gcov_report view_report s21_matrix.a clean
+
+# =============================================================================
+# Main Source, Objs list, BIN target, LIB
+# =============================================================================
+SRC = $(wildcard $(SOURCE_DIR)/*.c)
+MAIN_OBJS = $(patsubst $(SOURCE_DIR)/%.c, $(MAIN_OBJ_DIR)/%.o, $(SRC))
+MAIN_BIN = $(MAIN_BIN_DIR)/main
+STATIC_LIB = $(LIB_DIR)/s21_matrix.a
+# =============================================================================
+# Test Source, Objs list, BIN target
+# =============================================================================
+TESTS = $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJS = $(patsubst $(TEST_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TESTS))
+TEST_BIN = $(TEST_BIN_DIR)/test
+
+# =============================================================================
+# Compilation And Linking Of The Main Program
+# =============================================================================
+all: ${MAIN_BIN}
+	./${MAIN_BIN}
+
+${MAIN_BIN}: ${MAIN_OBJS} | ${MAIN_BIN_DIR}
+	${CC} ${MAIN_OBJS} -o $@
+
+${MAIN_OBJ_DIR}/%.o: ${SOURCE_DIR}/%.c | ${MAIN_OBJ_DIR}
+	${CC} ${CFLAGS} -c $< -o $@
+
+# =============================================================================
+# Create Static LIB
+# =============================================================================
+s21_matrix.a: $(STATIC_LIB)
+
+$(STATIC_LIB): $(MAIN_OBJS) | $(LIB_DIR)
+	$(AR) $@ $(MAIN_OBJS)
+	$(RANLIB) $@
+
+# =============================================================================
+# Compilation And Linking Of The Tests Covering The Main Program
+# =============================================================================
+test: ${TEST_BIN}
+	./${TEST_BIN}
+
+${TEST_BIN}: ${TEST_OBJS} ${MAIN_OBJS} | ${TEST_BIN_DIR}
+	${CC} ${TEST_OBJS} ${MAIN_OBJS} -o $@ ${TST_FLAG}
+
+${TEST_OBJ_DIR}/%.o: ${TEST_DIR}/%.c ${SOURCE_DIR}/%.c | ${TEST_OBJ_DIR}
+	${CC} ${TST_CFLAGS} -c $< -o $@
+
+# =============================================================================
+# Gcov Library Report
+# =============================================================================
+GCOV_ENV = GCOV_PREFIX=$(GCOV_DATA_DIR)
+gcov_report: $(TEST_BIN) | $(GCOV_DIR)
+	$(GCOV_ENV) ./$(TEST_BIN)
+# Сбор данных coverage
+	lcov -t "s21_matrix -> Tests Coverage" -o $(GCOV_DIR)/coverage.info -c -d $(GCOV_DATA_DIR) --rc lcov_branch_coverage=1
+# Генерируем HTML отчет
+	genhtml $(GCOV_DIR)/coverage.info -o $(GCOV_DIR)/html --rc genhtml_branch_coverage=1
+# Показываем краткую статистику
+	@echo "========================================="
+	@echo "Coverage report generated in: $(GCOV_DIR)/html/"
+	@echo "Open: $(GCOV_DIR)/html/index.html or call target {view_report}"
+	@echo "========================================="
+
+view_report: gcov_report
+	xdg-open $(GCOV_DIR)/html/index.html 2>/dev/null || open $(GCOV_DIR)/html/index.html 2>/dev/null || echo "Open manually: $(GCOV_DIR)/html/index.html"
+
+# =============================================================================
+# Detailed information about the project
+# =============================================================================
+info:
+	@echo "========================================="
+	@echo "📁 PROJECT STRUCTURE INFO"
+	@echo "========================================="
+	@echo "🏠 Build directory: $(BUILD_DIR)"
+	@echo "📚 Source directory: $(SOURCE_DIR)"
+	@echo "🧪 Test directory: $(TEST_DIR)"
+	@echo "📋 Include directory: $(INCLUDE_DIR)"
+	@echo ""
+	@echo "🔧 COMPILER CONFIGURATION"
+	@echo "========================================="
+	@echo "Compiler: $(CC)"
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo "Test CFLAGS: $(TST_CFLAGS)"
+	@echo "Test LIBS: $(TST_LIBS)"
+	@echo ""
+	@echo "📁 FILES INFO"
+	@echo "========================================="
+	@echo "Sources (SRC):"
+	@for file in $(SRC); do echo "  📄 $$file"; done
+	@echo ""
+	@echo "Objects (OBJS):"
+	@for file in $(MAIN_OBJS); do echo "  🔧 $$file"; done
+	@echo ""
+	@echo "Tests (TESTS):"
+	@for file in $(TESTS); do echo "  🧪 $$file"; done
+	@echo ""
+	@echo "🎯 TARGETS INFO"
+	@echo "========================================="
+	@echo "Main binary: $(MAIN_BIN)"
+	@echo "Test runner: $(TEST_BIN)"
+	@echo "Static library: $(STATIC_LIB)"
+	@echo "Coverage dir: $(GCOV_DIR)"
+	@echo "========================================="
+
+# =============================================================================
+# Brief information about the files
+# =============================================================================
+info_files:
+	@echo "📊 Files summary:"
+	@echo "  Sources: $(words $(SRC)) files"
+	@echo "  Tests: $(words $(TESTS)) files" 
+	@echo "  Objects: $(words $(MAIN_OBJS)) files"
+
+# =============================================================================
+# Information about the library
+# =============================================================================
+info_lib: $(STATIC_LIB)
+	@echo "========================================="
+	@echo "📚 STATIC LIBRARY INFO: $(STATIC_LIB)"
+	@echo "========================================="
+	@echo "Size: $$(stat -f%z $(STATIC_LIB) 2>/dev/null || stat -c%s $(STATIC_LIB) 2>/dev/null || echo "unknown") bytes"
+	@echo "Object files in library:"
+	@ar -t $(STATIC_LIB) | while read file; do echo "  📦 $$file"; done
+	@echo ""
+	@echo "Public symbols:"
+	@nm -g $(STATIC_LIB) | grep -E "T|D" | head -10 | while read line; do echo "  🔷 $$line"; done
+	@echo "========================================="
+
+# =============================================================================
+# Running tests by name (pattern matching)
+# =============================================================================
+test_%: $(TEST_BIN)
+	@echo "🧪 Running test suite: $*"
+	@./$(TEST_BIN) -s $*
+
+# =============================================================================
+# List of all available tests
+# =============================================================================
+test_list: $(TEST_BIN)
+	@echo "📋 Available test suites:"
+	@./$(TEST_BIN) --list | grep -E "^Suite:" | sed 's/Suite:/* /' || echo "  No test suites found"
+
+# =============================================================================
+# Cleaning build dir
+# =============================================================================
+clean: 
+	rm -rf ${BUILD_DIR}
+	find . -name "*.gcno" -delete
+	find . -name "*.gcda" -delete
+	find . -name "*.gcov" -delete

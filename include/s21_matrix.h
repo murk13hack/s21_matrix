@@ -6,7 +6,8 @@
 #ifndef S21_MATRIX_H
 #define S21_MATRIX_H
 
-/** @brief Structure representing the matrix
+/** 
+ * @brief Structure representing the matrix
  */
 typedef struct matrix_struct {
     double** matrix;
@@ -20,11 +21,14 @@ typedef struct matrix_struct {
 
 /* The resulting opcode (except matrix comparison) */
 #define S21_OK 0
+/* The resulting opcode (except matrix comparison) */
 #define S21_ERROR_INCORRECT_MATRIX 1
+/* The resulting opcode (except matrix comparison) */
 #define S21_ERROR_CALCULATION 2
 
 /* The resulting code for the operation: matrix comparison */
 #define SUCCESS 1
+/* The resulting code for the operation: matrix comparison */
 #define FAILURE 0
 
 #endif

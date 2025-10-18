@@ -15,14 +15,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Установка зависимостей
+      # 2. Кэширование пакетов apt
+      - name: Cache apt packages
+        uses: actions/cache@v3
+        with:
+          path: /var/cache/apt
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      # 3. Установка зависимостей (оптимизированная)
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+          # Create package list for caching
+          echo "make gcc valgrind cppcheck clang-format check" > apt-packages.txt
+          
+          # Use faster package installation
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
             make gcc valgrind cppcheck clang-format check
 
-      # 3. Проверка наличия исходных файлов
+      # 4. Проверка наличия исходных файлов
       - name: Check for source files
         run: |
           echo "🔍 Checking for source files..."
@@ -36,7 +49,7 @@ jobs:
           find src -name '*.c' | sed 's/^/  /'
         shell: bash
 
-      # 4. Форматирование и проверка стиля кода (clang-format)
+      # 5. Форматирование и проверка стиля кода (clang-format)
       - name: Format and check code style (clang-format)
         run: |
           echo "🔍 Formatting and checking code style..."
@@ -53,7 +66,7 @@ jobs:
           echo "✅ Code style check passed"
         shell: bash
 
-      # 5. Статический анализ (cppcheck)
+      # 6. Статический анализ (cppcheck)
       - name: Run static analysis (cppcheck)
         run: |
           echo "🧠 Running cppcheck..."
@@ -62,7 +75,7 @@ jobs:
             --error-exitcode=1 -I include src tests
         shell: bash
 
-      # 6. Сборка проекта
+      # 7. Сборка проекта
       - name: Build project
         run: |
           echo "🏗️ Building project..."
@@ -70,7 +83,7 @@ jobs:
           make build_if_available
         shell: bash
 
-      # 7. Запуск тестов
+      # 8. Запуск тестов
       - name: Run tests
         run: |
           echo "🧪 Running tests..."
@@ -83,7 +96,7 @@ jobs:
           make test_implemented
         shell: bash
 
-      # 8. Проверка утечек памяти
+      # 9. Проверка утечек памяти
       - name: Memory check (valgrind)
         run: |
           echo "🔬 Checking for memory leaks..."

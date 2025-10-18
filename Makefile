@@ -12,6 +12,7 @@ MAIN_BIN_DIR = $(BUILD_DIR)/bin/main
 GCOV_DIR = $(BUILD_DIR)/gcov_report
 GCOV_DATA_DIR = $(GCOV_DIR)/data
 LIB_DIR = $(BUILD_DIR)/lib
+
 # =============================================================================
 # Creating Directories
 # =============================================================================
@@ -36,7 +37,7 @@ REL_FLAG		::=		-DNDEBUG -O2
 AR 				::= 	ar rcs
 RANLIB 			::= 	ranlib
 
-.PHONY: all test gcov_report view_report s21_matrix.a clean
+.PHONY: all test gcov_report view_report s21_matrix.a clean test_implemented test_function build_if_available
 
 # =============================================================================
 # Main Source, Objs list, BIN target, LIB
@@ -53,10 +54,23 @@ TEST_OBJS = $(patsubst $(TEST_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TESTS))
 TEST_BIN = $(TEST_BIN_DIR)/test
 
 # =============================================================================
+# flags for special checking
+# =============================================================================
+CPPCHECK_FLAGS = --enable=all --inconclusive --std=c11 --language=c \
+                 --force --check-config --suppress=missingIncludeSystem \
+                 --error-exitcode=1 -I $(INCLUDE_DIR)
+VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-leak-kinds=all \
+                 --track-origins=yes --error-exitcode=1
+
+# =============================================================================
 # Compilation And Linking Of The Main Program
 # =============================================================================
 all: ${MAIN_BIN}
-	./${MAIN_BIN}
+	@echo "Running static analysis (cppcheck)..."
+	@cppcheck $(CPPCHECK_FLAGS) $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR)
+	@echo "Running valgrind memory check..."
+	@valgrind $(VALGRIND_FLAGS) ./${MAIN_BIN}
+	@echo "✅ All checks passed!"
 
 ${MAIN_BIN}: ${MAIN_OBJS} | ${MAIN_BIN_DIR}
 	${CC} ${MAIN_OBJS} -o $@
@@ -77,12 +91,16 @@ $(STATIC_LIB): $(MAIN_OBJS) | $(LIB_DIR)
 # Compilation And Linking Of The Tests Covering The Main Program
 # =============================================================================
 test: ${TEST_BIN}
-	./${TEST_BIN}
+	@echo "Running static analysis (cppcheck)..."
+	@cppcheck $(CPPCHECK_FLAGS) $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR)
+	@echo "Running tests under Valgrind..."
+	@valgrind $(VALGRIND_FLAGS) ./${TEST_BIN}
+	@echo "✅ Tests and memory checks passed!"
 
 ${TEST_BIN}: ${TEST_OBJS} ${MAIN_OBJS} | ${TEST_BIN_DIR}
 	${CC} ${TEST_OBJS} ${MAIN_OBJS} -o $@ ${TST_FLAG}
 
-${TEST_OBJ_DIR}/%.o: ${TEST_DIR}/%.c ${SOURCE_DIR}/%.c | ${TEST_OBJ_DIR}
+${TEST_OBJ_DIR}/%.o: ${TEST_DIR}/%.c | ${TEST_OBJ_DIR}
 	${CC} ${TST_CFLAGS} -c $< -o $@
 
 # =============================================================================
@@ -109,32 +127,32 @@ view_report: gcov_report
 # =============================================================================
 info:
 	@echo "========================================="
-	@echo "📁 PROJECT STRUCTURE INFO"
+	@echo "PROJECT STRUCTURE INFO"
 	@echo "========================================="
-	@echo "🏠 Build directory: $(BUILD_DIR)"
-	@echo "📚 Source directory: $(SOURCE_DIR)"
-	@echo "🧪 Test directory: $(TEST_DIR)"
-	@echo "📋 Include directory: $(INCLUDE_DIR)"
+	@echo "Build directory: $(BUILD_DIR)"
+	@echo "Source directory: $(SOURCE_DIR)"
+	@echo "Test directory: $(TEST_DIR)"
+	@echo "Include directory: $(INCLUDE_DIR)"
 	@echo ""
-	@echo "🔧 COMPILER CONFIGURATION"
+	@echo "COMPILER CONFIGURATION"
 	@echo "========================================="
 	@echo "Compiler: $(CC)"
 	@echo "CFLAGS: $(CFLAGS)"
 	@echo "Test CFLAGS: $(TST_CFLAGS)"
 	@echo "Test LIBS: $(TST_LIBS)"
 	@echo ""
-	@echo "📁 FILES INFO"
+	@echo "FILES INFO"
 	@echo "========================================="
 	@echo "Sources (SRC):"
-	@for file in $(SRC); do echo "  📄 $$file"; done
+	@for file in $(SRC); do echo "$$file"; done
 	@echo ""
 	@echo "Objects (OBJS):"
-	@for file in $(MAIN_OBJS); do echo "  🔧 $$file"; done
+	@for file in $(MAIN_OBJS); do echo "$$file"; done
 	@echo ""
 	@echo "Tests (TESTS):"
-	@for file in $(TESTS); do echo "  🧪 $$file"; done
+	@for file in $(TESTS); do echo "$$file"; done
 	@echo ""
-	@echo "🎯 TARGETS INFO"
+	@echo "TARGETS INFO"
 	@echo "========================================="
 	@echo "Main binary: $(MAIN_BIN)"
 	@echo "Test runner: $(TEST_BIN)"
@@ -146,7 +164,7 @@ info:
 # Brief information about the files
 # =============================================================================
 info_files:
-	@echo "📊 Files summary:"
+	@echo "  Files summary:"
 	@echo "  Sources: $(words $(SRC)) files"
 	@echo "  Tests: $(words $(TESTS)) files" 
 	@echo "  Objects: $(words $(MAIN_OBJS)) files"
@@ -156,28 +174,87 @@ info_files:
 # =============================================================================
 info_lib: $(STATIC_LIB)
 	@echo "========================================="
-	@echo "📚 STATIC LIBRARY INFO: $(STATIC_LIB)"
+	@echo "STATIC LIBRARY INFO: $(STATIC_LIB)"
 	@echo "========================================="
 	@echo "Size: $$(stat -f%z $(STATIC_LIB) 2>/dev/null || stat -c%s $(STATIC_LIB) 2>/dev/null || echo "unknown") bytes"
 	@echo "Object files in library:"
-	@ar -t $(STATIC_LIB) | while read file; do echo "  📦 $$file"; done
+	@ar -t $(STATIC_LIB) | while read file; do echo "  $$file"; done
 	@echo ""
 	@echo "Public symbols:"
-	@nm -g $(STATIC_LIB) | grep -E "T|D" | head -10 | while read line; do echo "  🔷 $$line"; done
+	@nm -g $(STATIC_LIB) | grep -E "T|D" | head -10 | while read line; do echo "  $$line"; done
 	@echo "========================================="
 
 # =============================================================================
 # Running tests by name (pattern matching)
 # =============================================================================
 test_%: $(TEST_BIN)
-	@echo "🧪 Running test suite: $*"
-	@./$(TEST_BIN) -s $*
+	@echo "Running cppcheck before test suite: $*"
+	@cppcheck $(CPPCHECK_FLAGS) $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR)
+	@echo "Running test suite '$*' under Valgrind..."
+	@valgrind $(VALGRIND_FLAGS) ./${TEST_BIN} -s $*
+	@echo "✅ Tests and memory checks passed!"
+
+# =============================================================================
+# Selective testing based on available source files
+# =============================================================================
+# Check which source files exist and only test those
+AVAILABLE_SOURCES = $(wildcard $(SOURCE_DIR)/*.c)
+AVAILABLE_TESTS = $(wildcard $(TEST_DIR)/*.c)
+
+# Test only implemented functions
+test_implemented: $(TEST_BIN)
+	@echo "========================================="
+	@echo "TESTING IMPLEMENTED FUNCTIONS ONLY"
+	@echo "========================================="
+	@echo "Available source files:"
+	@for file in $(AVAILABLE_SOURCES); do echo "  $$file"; done
+	@echo ""
+	@echo "Available test files:"
+	@for file in $(AVAILABLE_TESTS); do echo "  $$file"; done
+	@echo ""
+	@if [ -z "$(AVAILABLE_SOURCES)" ]; then \
+		echo "⚠️  No source files found in $(SOURCE_DIR)/"; \
+		echo "   Create source files first before running tests."; \
+		exit 1; \
+	fi
+	@if [ -z "$(AVAILABLE_TESTS)" ]; then \
+		echo "⚠️  No test files found in $(TEST_DIR)/"; \
+		echo "   Create test files first before running tests."; \
+		exit 1; \
+	fi
+	@echo "Running static analysis (cppcheck)..."
+	@cppcheck $(CPPCHECK_FLAGS) $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR)
+	@echo "Running tests under Valgrind..."
+	@valgrind $(VALGRIND_FLAGS) ./${TEST_BIN}
+	@echo "✅ Tests and memory checks passed!"
+
+# Test specific function (e.g., make test_function create_matrix)
+test_function: $(TEST_BIN)
+	@if [ -z "$(FUNC)" ]; then \
+		echo "Usage: make test_function FUNC=function_name"; \
+		echo "Available functions:"; \
+		@for file in $(AVAILABLE_SOURCES); do \
+			basename $$file .c | sed 's/s21_//' | sed 's/^/  /'; \
+		done; \
+		exit 1; \
+	fi
+	@echo "Running tests for function: $(FUNC)"
+	@valgrind $(VALGRIND_FLAGS) ./${TEST_BIN} -s $(FUNC)
+
+# Build and test only if source files exist
+build_if_available: 
+	@if [ -n "$(AVAILABLE_SOURCES)" ]; then \
+		echo "Building with available sources..."; \
+		make s21_matrix.a; \
+	else \
+		echo "⚠️  No source files found. Skipping build."; \
+	fi
 
 # =============================================================================
 # List of all available tests
 # =============================================================================
 test_list: $(TEST_BIN)
-	@echo "📋 Available test suites:"
+	@echo "Available test suites:"
 	@./$(TEST_BIN) --list | grep -E "^Suite:" | sed 's/Suite:/* /' || echo "  No test suites found"
 
 # =============================================================================

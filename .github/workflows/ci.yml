@@ -1,0 +1,98 @@
+name: C Project CI
+
+on:
+  push:
+    branches: [ main, master, dev, develop ]
+  pull_request:
+    branches: [ main, master, dev, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Клонирование репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Установка зависимостей
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            make gcc valgrind cppcheck clang-format libcheck-dev
+
+      # 3. Проверка наличия исходных файлов
+      - name: Check for source files
+        run: |
+          echo "🔍 Checking for source files..."
+          if [ ! -d "src" ] || [ -z "$(find src -name '*.c' 2>/dev/null)" ]; then
+            echo "⚠️  No source files found in src/ directory"
+            echo "   This is expected for initial commits. CI will pass."
+            echo "   Create source files to enable full testing."
+            exit 0
+          fi
+          echo "✅ Source files found:"
+          find src -name '*.c' | sed 's/^/  /'
+        shell: bash
+
+      # 4. Проверка стиля кода (clang-format) - только если есть файлы
+      - name: Check code style (clang-format)
+        run: |
+          echo "🔍 Checking code style..."
+          clang-format --version
+          if [ -d "src" ] && [ -n "$(find src -name '*.c' 2>/dev/null)" ]; then
+            clang-format --dry-run --Werror $(find src include tests -name '*.c' -o -name '*.h' 2>/dev/null)
+          else
+            echo "⚠️  Skipping clang-format check - no source files"
+          fi
+        shell: bash
+
+      # 5. Статический анализ (cppcheck) - только если есть файлы
+      - name: Run static analysis (cppcheck)
+        run: |
+          echo "🧠 Running cppcheck..."
+          if [ -d "src" ] && [ -n "$(find src -name '*.c' 2>/dev/null)" ]; then
+            cppcheck --enable=all --inconclusive --std=c11 \
+              --force --error-exitcode=1 \
+              -I include src tests
+          else
+            echo "⚠️  Skipping cppcheck - no source files"
+          fi
+        shell: bash
+
+      # 6. Сборка проекта - только если есть файлы
+      - name: Build project
+        run: |
+          echo "🏗️ Building project..."
+          make clean
+          if [ -d "src" ] && [ -n "$(find src -name '*.c' 2>/dev/null)" ]; then
+            make build_if_available
+          else
+            echo "⚠️  No source files to build"
+          fi
+        shell: bash
+
+      # 7. Запуск тестов - только если есть файлы
+      - name: Run tests
+        run: |
+          echo "🧪 Running tests..."
+          if [ -d "src" ] && [ -n "$(find src -name '*.c' 2>/dev/null)" ] && \
+             [ -d "tests" ] && [ -n "$(find tests -name '*.c' 2>/dev/null)" ]; then
+            make test_implemented
+          else
+            echo "⚠️  No source or test files found"
+            echo "   Create source files in src/ and test files in tests/ to enable testing"
+          fi
+        shell: bash
+
+      # 8. Проверка утечек памяти - только если есть тесты
+      - name: Memory check (valgrind)
+        run: |
+          echo "🔬 Checking for memory leaks..."
+          if [ -f "${{ github.workspace }}/build/bin/tests/test" ]; then
+            valgrind --leak-check=full --error-exitcode=1 ./${{ github.workspace }}/build/bin/tests/test
+          else
+            echo "⚠️  No test binary found - skipping memory check"
+          fi
+        shell: bash

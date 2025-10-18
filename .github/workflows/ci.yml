@@ -15,27 +15,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Кэширование пакетов apt (с правильными правами)
+      # 2. Исправление прав для apt кэша
+      - name: Fix permissions for apt cache
+        run: |
+          sudo chmod -R 755 /var/lib/apt/lists/
+          sudo chmod -R 755 /var/cache/apt/
+          sudo rm -rf /var/lib/apt/lists/partial/*
+          sudo rm -rf /var/cache/apt/partial/*
+
+      # 3. Кэширование пакетов apt
       - name: Cache apt packages
         uses: actions/cache@v3
         with:
           path: |
             /var/lib/apt/lists
-            /var/cache/apt/pkgcache.bin
-            /var/cache/apt/srcpkgcache.bin
+            /var/cache/apt
           key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
 
-      # 3. Установка зависимостей (с кэшированием)
+      # 4. Установка зависимостей (с кэшированием)
       - name: Install dependencies
         run: |
           # Create package list for caching
           echo "make gcc valgrind cppcheck clang-format check" > apt-packages.txt
-          
-          # Make apt directories readable for caching
-          sudo chmod -R a+r /var/lib/apt/lists/ 2>/dev/null || true
-          sudo chmod -R a+r /var/cache/apt/ 2>/dev/null || true
           
           # Update package list only if cache miss
           if [ ! -f /var/cache/apt/pkgcache.bin ]; then
@@ -49,7 +50,7 @@ jobs:
           sudo apt-get install -y -qq --no-install-recommends \
             make gcc valgrind cppcheck clang-format check
 
-      # 4. Проверка наличия исходных файлов
+      # 5. Проверка наличия исходных файлов
       - name: Check for source files
         run: |
           echo "🔍 Checking for source files..."
@@ -63,7 +64,7 @@ jobs:
           find src -name '*.c' | sed 's/^/  /'
         shell: bash
 
-      # 5. Форматирование и проверка стиля кода (clang-format)
+      # 6. Форматирование и проверка стиля кода (clang-format)
       - name: Format and check code style (clang-format)
         run: |
           echo "🔍 Formatting and checking code style..."
@@ -80,7 +81,7 @@ jobs:
           echo "✅ Code style check passed"
         shell: bash
 
-      # 6. Статический анализ (cppcheck)
+      # 7. Статический анализ (cppcheck)
       - name: Run static analysis (cppcheck)
         run: |
           echo "🧠 Running cppcheck..."
@@ -89,7 +90,7 @@ jobs:
             --error-exitcode=1 -I include src tests
         shell: bash
 
-      # 7. Сборка проекта
+      # 8. Сборка проекта
       - name: Build project
         run: |
           echo "🏗️ Building project..."
@@ -97,7 +98,7 @@ jobs:
           make build_if_available
         shell: bash
 
-      # 8. Запуск тестов
+      # 9. Запуск тестов
       - name: Run tests
         run: |
           echo "🧪 Running tests..."
@@ -110,7 +111,7 @@ jobs:
           make test_implemented
         shell: bash
 
-      # 9. Проверка утечек памяти
+      # 10. Проверка утечек памяти
       - name: Memory check (valgrind)
         run: |
           echo "🔬 Checking for memory leaks..."

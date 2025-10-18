@@ -15,53 +15,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Исправление прав для apt кэша
-      - name: Fix permissions for apt cache
-        run: |
-          sudo chmod -R 755 /var/lib/apt/lists/
-          sudo chmod -R 755 /var/cache/apt/
-          sudo rm -rf /var/lib/apt/lists/partial/*
-          sudo rm -rf /var/cache/apt/partial/*
-
-      # 3. Очистка partial директорий apt
-      - name: Clean apt partial directories
-        run: |
-          sudo rm -rf /var/lib/apt/lists/partial/
-          sudo rm -rf /var/cache/apt/archives/partial/
-          # Создаем пустые partial директории с правильными правами
-          sudo mkdir -p /var/lib/apt/lists/partial/
-          sudo mkdir -p /var/cache/apt/archives/partial/
-          sudo chmod 700 /var/lib/apt/lists/partial/
-          sudo chmod 700 /var/cache/apt/archives/partial/
-
-      # 4. Кэширование пакетов apt
+      # 2. Кэширование только .deb пакетов (безопасный способ)
       - name: Cache apt packages
         uses: actions/cache@v3
         with:
-          path: |
-            /var/lib/apt/lists
-            /var/cache/apt/archives
+          path: /var/cache/apt/archives
           key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
 
-      # 5. Установка зависимостей (с кэшированием)
+      # 3. Установка зависимостей (с кэшированием)
       - name: Install dependencies
         run: |
           # Create package list for caching
           echo "make gcc valgrind cppcheck clang-format check" > apt-packages.txt
           
-          # Update package list only if cache miss
-          if [ ! -f /var/cache/apt/pkgcache.bin ]; then
-            echo "📦 Cache miss - updating package lists..."
-            sudo apt-get update -qq
-          else
-            echo "✅ Using cached package lists..."
-          fi
+          # Always update package lists (they are not cached)
+          echo "📦 Updating package lists..."
+          sudo apt-get update -qq
           
-          # Install packages
+          # Install packages (will use cached .deb files if available)
           sudo apt-get install -y -qq --no-install-recommends \
             make gcc valgrind cppcheck clang-format check
 
-      # 6. Проверка наличия исходных файлов
+      # 4. Проверка наличия исходных файлов
       - name: Check for source files
         run: |
           echo "🔍 Checking for source files..."
@@ -75,7 +52,7 @@ jobs:
           find src -name '*.c' | sed 's/^/  /'
         shell: bash
 
-      # 7. Форматирование и проверка стиля кода (clang-format)
+      # 5. Форматирование и проверка стиля кода (clang-format)
       - name: Format and check code style (clang-format)
         run: |
           echo "🔍 Formatting and checking code style..."
@@ -92,7 +69,7 @@ jobs:
           echo "✅ Code style check passed"
         shell: bash
 
-      # 8. Статический анализ (cppcheck)
+      # 6. Статический анализ (cppcheck)
       - name: Run static analysis (cppcheck)
         run: |
           echo "🧠 Running cppcheck..."
@@ -101,7 +78,7 @@ jobs:
             --error-exitcode=1 -I include src tests
         shell: bash
 
-      # 9. Сборка проекта
+      # 7. Сборка проекта
       - name: Build project
         run: |
           echo "🏗️ Building project..."
@@ -109,7 +86,7 @@ jobs:
           make build_if_available
         shell: bash
 
-      # 10. Запуск тестов
+      # 8. Запуск тестов
       - name: Run tests
         run: |
           echo "🧪 Running tests..."
@@ -122,7 +99,7 @@ jobs:
           make test_implemented
         shell: bash
 
-      # 11. Проверка утечек памяти
+      # 9. Проверка утечек памяти
       - name: Memory check (valgrind)
         run: |
           echo "🔬 Checking for memory leaks..."

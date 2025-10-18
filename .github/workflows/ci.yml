@@ -36,12 +36,21 @@ jobs:
           find src -name '*.c' | sed 's/^/  /'
         shell: bash
 
-      # 4. Проверка стиля кода (clang-format)
-      - name: Check code style (clang-format)
+      # 4. Форматирование и проверка стиля кода (clang-format)
+      - name: Format and check code style (clang-format)
         run: |
-          echo "🔍 Checking code style..."
+          echo "🔍 Formatting and checking code style..."
           clang-format --version
-          clang-format --dry-run --Werror $(find src include tests -name '*.c' -o -name '*.h' 2>/dev/null)
+          # Format all C and H files
+          find src include tests -name '*.c' -o -name '*.h' 2>/dev/null | xargs clang-format -i
+          echo "✅ Code formatted successfully"
+          # Check if formatting changed anything (should be clean after formatting)
+          if ! git diff --quiet; then
+            echo "❌ Code formatting issues found. Please run 'clang-format -i' on your files."
+            git diff
+            exit 1
+          fi
+          echo "✅ Code style check passed"
         shell: bash
 
       # 5. Статический анализ (cppcheck)

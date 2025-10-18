@@ -37,7 +37,7 @@ REL_FLAG		::=		-DNDEBUG -O2
 AR 				::= 	ar rcs
 RANLIB 			::= 	ranlib
 
-.PHONY: all test gcov_report view_report s21_matrix.a clean test_implemented test_function build_if_available
+.PHONY: all test gcov_report view_report s21_matrix.a clean test_implemented test_function build_if_available format format-check
 
 # =============================================================================
 # Main Source, Objs list, BIN target, LIB
@@ -256,6 +256,35 @@ build_if_available:
 test_list: $(TEST_BIN)
 	@echo "Available test suites:"
 	@./$(TEST_BIN) --list | grep -E "^Suite:" | sed 's/Suite:/* /' || echo "  No test suites found"
+
+# =============================================================================
+# Code formatting targets
+# =============================================================================
+format:
+	@echo "🔧 Formatting code with clang-format..."
+	@if command -v clang-format >/dev/null 2>&1; then \
+		find $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR) -name '*.c' -o -name '*.h' 2>/dev/null | xargs clang-format -i; \
+		echo "✅ Code formatted successfully"; \
+	else \
+		echo "❌ clang-format not found. Please install it:"; \
+		echo "   Ubuntu/Debian: sudo apt-get install clang-format"; \
+		echo "   macOS: brew install clang-format"; \
+		exit 1; \
+	fi
+
+format-check:
+	@echo "🔍 Checking code formatting..."
+	@if command -v clang-format >/dev/null 2>&1; then \
+		if find $(SOURCE_DIR) $(INCLUDE_DIR) $(TEST_DIR) -name '*.c' -o -name '*.h' 2>/dev/null | xargs clang-format --dry-run --Werror; then \
+			echo "✅ Code formatting is correct"; \
+		else \
+			echo "❌ Code formatting issues found. Run 'make format' to fix."; \
+			exit 1; \
+		fi; \
+	else \
+		echo "❌ clang-format not found. Please install it."; \
+		exit 1; \
+	fi
 
 # =============================================================================
 # Cleaning build dir

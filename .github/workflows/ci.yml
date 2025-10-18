@@ -1,0 +1,101 @@
+name: C Project CI
+
+on:
+  push:
+    branches: [ main, master, dev, develop ]
+  pull_request:
+    branches: [ main, master, dev, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Клонирование репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Кэширование и установка зависимостей через специальный action
+      - name: Cache and install apt packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: |
+            make
+            gcc
+            valgrind
+            cppcheck
+            clang-format
+            check
+          version: "1.0"
+
+      # 4. Проверка наличия исходных файлов
+      - name: Check for source files
+        run: |
+          echo "🔍 Checking for source files..."
+          if [ ! -d "src" ] || [ -z "$(find src -name '*.c' 2>/dev/null)" ]; then
+            echo "❌ No source files found in src/ directory"
+            echo "   Source files are required for this project."
+            echo "   Please add source files to enable testing."
+            exit 1
+          fi
+          echo "✅ Source files found:"
+          find src -name '*.c' | sed 's/^/  /'
+        shell: bash
+
+      # 5. Форматирование и проверка стиля кода (clang-format)
+      - name: Format and check code style (clang-format)
+        run: |
+          echo "🔍 Formatting and checking code style..."
+          clang-format --version
+          # Format all C and H files
+          find src include tests -name '*.c' -o -name '*.h' 2>/dev/null | xargs clang-format -i
+          echo "✅ Code formatted successfully"
+          # Check if formatting changed anything (should be clean after formatting)
+          if ! git diff --quiet; then
+            echo "❌ Code formatting issues found. Please run 'clang-format -i' on your files."
+            git diff
+            exit 1
+          fi
+          echo "✅ Code style check passed"
+        shell: bash
+
+      # 6. Статический анализ (cppcheck)
+      - name: Run static analysis (cppcheck)
+        run: |
+          echo "🧠 Running cppcheck..."
+          cppcheck --enable=all --inconclusive --std=c11 --language=c \
+            --force --check-config --suppress=missingIncludeSystem \
+            --error-exitcode=1 -I include src tests
+        shell: bash
+
+      # 7. Сборка проекта
+      - name: Build project
+        run: |
+          echo "🏗️ Building project..."
+          make clean
+          make build_if_available
+        shell: bash
+
+      # 8. Запуск тестов
+      - name: Run tests
+        run: |
+          echo "🧪 Running tests..."
+          if [ ! -d "tests" ] || [ -z "$(find tests -name '*.c' 2>/dev/null)" ]; then
+            echo "❌ No test files found in tests/ directory"
+            echo "   Test files are required for this project."
+            echo "   Please add test files to enable testing."
+            exit 1
+          fi
+          make test_implemented
+        shell: bash
+
+      # 9. Проверка утечек памяти
+      - name: Memory check (valgrind)
+        run: |
+          echo "🔬 Checking for memory leaks..."
+          if [ ! -f "build/bin/tests/test" ]; then
+            echo "❌ Test binary not found - build or tests failed"
+            exit 1
+          fi
+          valgrind --leak-check=full --error-exitcode=1 ./build/bin/tests/test
+        shell: bash

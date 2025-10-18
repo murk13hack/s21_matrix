@@ -20,7 +20,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            make gcc valgrind cppcheck clang-format libcheck-dev
+            make gcc valgrind cppcheck clang-format check
 
       # 3. Проверка наличия исходных файлов
       - name: Check for source files

@@ -100,9 +100,9 @@ jobs:
       - name: Memory check (valgrind)
         run: |
           echo "🔬 Checking for memory leaks..."
-          if [ ! -f "${{ github.workspace }}/build/bin/tests/test" ]; then
+          if [ ! -f "build/bin/tests/test" ]; then
             echo "❌ Test binary not found - build or tests failed"
             exit 1
           fi
-          valgrind --leak-check=full --error-exitcode=1 ./${{ github.workspace }}/build/bin/tests/test
+          valgrind --leak-check=full --error-exitcode=1 ./build/bin/tests/test
         shell: bash

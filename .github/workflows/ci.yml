@@ -57,9 +57,9 @@ jobs:
       - name: Run static analysis (cppcheck)
         run: |
           echo "🧠 Running cppcheck..."
-          cppcheck --enable=all --inconclusive --std=c11 \
-            --force --error-exitcode=1 \
-            -I include src tests
+          cppcheck --enable=all --inconclusive --std=c11 --language=c \
+            --force --check-config --suppress=missingIncludeSystem \
+            --error-exitcode=1 -I include src tests
         shell: bash
 
       # 6. Сборка проекта

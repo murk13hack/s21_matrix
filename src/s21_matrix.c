@@ -61,7 +61,7 @@ void s21_remove_matrix(matrix_t* A) {
  * @param B Pointer to the matrix
  * @return Error code: `1` (SUCCESS), `0` (FAILURE)
  */
-int s21_eq_matrix(matrix_t* A, matrix_t* B) {
+int s21_eq_matrix(const matrix_t* A, const matrix_t* B) {
   if (A == NULL || B == NULL || A->matrix == NULL || B->matrix == NULL) {
     return FAILURE;
   }

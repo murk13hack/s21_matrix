@@ -67,7 +67,7 @@ void s21_remove_matrix(matrix_t* A);
  * @author murk13hack
  * @date 28.09.25
  */
-int s21_eq_matrix(matrix_t* A, matrix_t* B);
+int s21_eq_matrix(const matrix_t* A, const matrix_t* B);
 
 /**
  * @brief Adding two matrices

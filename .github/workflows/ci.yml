@@ -15,28 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Кэширование только .deb пакетов (безопасный способ)
-      - name: Cache apt packages
-        uses: actions/cache@v3
+      # 2. Кэширование и установка зависимостей через специальный action
+      - name: Cache and install apt packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
-
-      # 3. Установка зависимостей (с кэшированием)
-      - name: Install dependencies
-        run: |
-          # Create package list for caching
-          echo "make gcc valgrind cppcheck clang-format check" > apt-packages.txt
-          
-          # Always update package lists (they are not cached)
-          echo "📦 Updating package lists..."
-          sudo apt-get update -qq
-          
-          # Install packages (will use cached .deb files if available)
-          sudo apt-get install -y -qq --no-install-recommends \
-            make gcc valgrind cppcheck clang-format check
+          packages: |
+            make
+            gcc
+            valgrind
+            cppcheck
+            clang-format
+            check
+          version: "1.0"
 
       # 4. Проверка наличия исходных файлов
       - name: Check for source files

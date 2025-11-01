@@ -9,7 +9,8 @@
 #include "../include/s21_matrix.h"
 
 /**
- * @brief Check if matrix is valid (not NULL, has valid dimensions, matrix pointer exists)
+ * @brief Check if matrix is valid (not NULL, has valid dimensions, matrix
+ * pointer exists)
  * @param A Pointer to the matrix
  * @return 1 if valid, 0 otherwise
  */
@@ -57,4 +58,3 @@ int s21_create_minor(const matrix_t* A, int row, int col, matrix_t* result);
 int s21_determinant_recursive(const matrix_t* A, double* result);
 
 #endif  // S21_MATRIX_HELPERS_H
-

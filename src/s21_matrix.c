@@ -1,7 +1,7 @@
 #include "../include/s21_matrix.h"
-#include "helpers/s21_matrix_helpers.h"
 #include <math.h>
 #include <stdlib.h>
+#include "helpers/s21_matrix_helpers.h"
 
 /**
  * @brief Create an m by n matrix

@@ -1,7 +1,7 @@
-#include "../include/s21_matrix.h"
-#include "helpers/s21_matrix_helpers.h"
 #include <math.h>
 #include <stddef.h>
+#include "../include/s21_matrix.h"
+#include "helpers/s21_matrix_helpers.h"
 
 /**
  * @brief Finding the inverse matrix

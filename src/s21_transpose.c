@@ -1,6 +1,6 @@
+#include <stddef.h>
 #include "../include/s21_matrix.h"
 #include "helpers/s21_matrix_helpers.h"
-#include <stddef.h>
 
 /**
  * @brief Matrix transposition

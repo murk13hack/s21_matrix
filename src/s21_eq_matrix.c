@@ -1,6 +1,6 @@
-#include "../include/s21_matrix.h"
 #include <math.h>
 #include <stddef.h>
+#include "../include/s21_matrix.h"
 
 /**
  * @brief Comparing two matrices

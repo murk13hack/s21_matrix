@@ -42,8 +42,11 @@ RANLIB 			::= 	ranlib
 # =============================================================================
 # Main Source, Objs list, BIN target, LIB
 # =============================================================================
-SRC = $(wildcard $(SOURCE_DIR)/*.c)
-MAIN_OBJS = $(patsubst $(SOURCE_DIR)/%.c, $(MAIN_OBJ_DIR)/%.o, $(SRC))
+SRC = $(wildcard $(SOURCE_DIR)/*.c) $(wildcard $(SOURCE_DIR)/helpers/*.c)
+HELPERS_SRC = $(wildcard $(SOURCE_DIR)/helpers/*.c)
+MAIN_SRC = $(filter-out $(HELPERS_SRC), $(SRC))
+MAIN_OBJS = $(patsubst $(SOURCE_DIR)/%.c, $(MAIN_OBJ_DIR)/%.o, $(MAIN_SRC)) \
+            $(patsubst $(SOURCE_DIR)/helpers/%.c, $(MAIN_OBJ_DIR)/helpers_%.o, $(HELPERS_SRC))
 MAIN_BIN = $(MAIN_BIN_DIR)/main
 STATIC_LIB = $(LIB_DIR)/s21_matrix.a
 # =============================================================================
@@ -76,6 +79,9 @@ ${MAIN_BIN}: ${MAIN_OBJS} | ${MAIN_BIN_DIR}
 	${CC} ${MAIN_OBJS} -o $@
 
 ${MAIN_OBJ_DIR}/%.o: ${SOURCE_DIR}/%.c | ${MAIN_OBJ_DIR}
+	${CC} ${CFLAGS} -c $< -o $@
+
+${MAIN_OBJ_DIR}/helpers_%.o: ${SOURCE_DIR}/helpers/%.c | ${MAIN_OBJ_DIR}
 	${CC} ${CFLAGS} -c $< -o $@
 
 # =============================================================================

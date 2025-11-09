@@ -298,6 +298,8 @@ format-check:
 # =============================================================================
 clean: 
 	rm -rf ${BUILD_DIR}
+	rm -f test_log.txt
+	rm -f vgcore.*
 	find . -name "*.gcno" -delete
 	find . -name "*.gcda" -delete
 	find . -name "*.gcov" -delete

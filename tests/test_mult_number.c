@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
 
+// Объявление функций логирования
+void test_start(const char* test_name);
+void test_end(const char* test_name);
+
 // Test suite for s21_mult_number function
 START_TEST(test_mult_number_valid) {
+  test_start("test_mult_number_valid");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -23,10 +28,12 @@ START_TEST(test_mult_number_valid) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_mult_number_valid");
 }
 END_TEST
 
 START_TEST(test_mult_number_by_zero) {
+  test_start("test_mult_number_by_zero");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -44,10 +51,12 @@ START_TEST(test_mult_number_by_zero) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_mult_number_by_zero");
 }
 END_TEST
 
 START_TEST(test_mult_number_by_negative) {
+  test_start("test_mult_number_by_negative");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -65,18 +74,22 @@ START_TEST(test_mult_number_by_negative) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_mult_number_by_negative");
 }
 END_TEST
 
 START_TEST(test_mult_number_null_A) {
+  test_start("test_mult_number_null_A");
   matrix_t result;
 
   int status = s21_mult_number(NULL, 2.0, &result);
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
+  test_end("test_mult_number_null_A");
 }
 END_TEST
 
 START_TEST(test_mult_number_null_result) {
+  test_start("test_mult_number_null_result");
   matrix_t A;
   s21_create_matrix(2, 2, &A);
 
@@ -84,10 +97,12 @@ START_TEST(test_mult_number_null_result) {
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
 
   s21_remove_matrix(&A);
+  test_end("test_mult_number_null_result");
 }
 END_TEST
 
 START_TEST(test_mult_number_by_one) {
+  test_start("test_mult_number_by_one");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -105,10 +120,12 @@ START_TEST(test_mult_number_by_one) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_mult_number_by_one");
 }
 END_TEST
 
 START_TEST(test_mult_number_decimal) {
+  test_start("test_mult_number_decimal");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -126,6 +143,7 @@ START_TEST(test_mult_number_decimal) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_mult_number_decimal");
 }
 END_TEST
 

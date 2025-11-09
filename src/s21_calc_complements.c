@@ -10,9 +10,13 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_calc_complements(matrix_t* A, matrix_t* result) {
-  int status = s21_validate_single_matrix(A, result);
+  if (!s21_init_matrix(result)) {
+    return S21_ERROR_INCORRECT_MATRIX;
+  }
+
+  int status = s21_validate_single_matrix(A);
   if (status != S21_OK)
-    return status;
+    return S21_ERROR_INCORRECT_MATRIX;
 
   if (!s21_matrix_is_square(A) || A->rows <= 1) {
     return S21_ERROR_CALCULATION;

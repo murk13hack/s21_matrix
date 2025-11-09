@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
 
+// Объявление функций логирования
+void test_start(const char* test_name);
+void test_end(const char* test_name);
+
 // Test suite for s21_inverse_matrix function
 START_TEST(test_inverse_matrix_2x2) {
+  test_start("test_inverse_matrix_2x2");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -21,10 +26,12 @@ START_TEST(test_inverse_matrix_2x2) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_inverse_matrix_2x2");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_3x3) {
+  test_start("test_inverse_matrix_3x3");
   matrix_t A, result;
   s21_create_matrix(3, 3, &A);
 
@@ -45,10 +52,12 @@ START_TEST(test_inverse_matrix_3x3) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_inverse_matrix_3x3");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_singular) {
+  test_start("test_inverse_matrix_singular");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -62,10 +71,12 @@ START_TEST(test_inverse_matrix_singular) {
   ck_assert_int_eq(status, S21_ERROR_CALCULATION);
 
   s21_remove_matrix(&A);
+  test_end("test_inverse_matrix_singular");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_non_square) {
+  test_start("test_inverse_matrix_non_square");
   matrix_t A, result;
   s21_create_matrix(2, 3, &A);
 
@@ -73,18 +84,22 @@ START_TEST(test_inverse_matrix_non_square) {
   ck_assert_int_eq(status, S21_ERROR_CALCULATION);
 
   s21_remove_matrix(&A);
+  test_end("test_inverse_matrix_non_square");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_null_A) {
+  test_start("test_inverse_matrix_null_A");
   matrix_t result;
 
   int status = s21_inverse_matrix(NULL, &result);
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
+  test_end("test_inverse_matrix_null_A");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_null_result) {
+  test_start("test_inverse_matrix_null_result");
   matrix_t A;
   s21_create_matrix(2, 2, &A);
 
@@ -92,10 +107,12 @@ START_TEST(test_inverse_matrix_null_result) {
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
 
   s21_remove_matrix(&A);
+  test_end("test_inverse_matrix_null_result");
 }
 END_TEST
 
 START_TEST(test_inverse_matrix_identity) {
+  test_start("test_inverse_matrix_identity");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -114,6 +131,7 @@ START_TEST(test_inverse_matrix_identity) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&result);
+  test_end("test_inverse_matrix_identity");
 }
 END_TEST
 

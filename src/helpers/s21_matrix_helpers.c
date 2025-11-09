@@ -22,6 +22,17 @@ int s21_matrix_is_valid(const matrix_t* A) {
   return SUCCESS;
 }
 
+int s21_init_matrix(matrix_t* result) {
+  int status = FAILURE;
+  if (result) {
+    result->matrix = NULL;
+    result->rows = 0;
+    result->columns = 0;
+    status = SUCCESS;
+  }
+  return status;
+}
+
 int s21_matrices_same_size(const matrix_t* A, const matrix_t* B) {
   int result = FAILURE;
 
@@ -169,7 +180,7 @@ double s21_mult_matrix_element(const matrix_t* A, const matrix_t* B, int row,
 }
 
 int s21_calculate_inverse_step(matrix_t* A, double det, matrix_t* result) {
-  if (!s21_matrix_is_valid(A) || result == NULL) {
+  if (!s21_matrix_is_valid(A)) {
     return S21_ERROR_INCORRECT_MATRIX;
   }
 
@@ -203,25 +214,22 @@ int s21_calculate_inverse_step(matrix_t* A, double det, matrix_t* result) {
   return status;
 }
 
-int s21_validate_two_matrices(const matrix_t* A, const matrix_t* B,
-                              const matrix_t* result) {
-  if (A == NULL || B == NULL || result == NULL) {
-    return S21_ERROR_INCORRECT_MATRIX;
-  }
+int s21_validate_two_matrices(const matrix_t* A, const matrix_t* B) {
+  int status = S21_OK;
   if (!s21_matrix_is_valid(A) || !s21_matrix_is_valid(B)) {
-    return S21_ERROR_INCORRECT_MATRIX;
+    status = S21_ERROR_INCORRECT_MATRIX;
   }
-  return S21_OK;
+
+  return status;
 }
 
-int s21_validate_single_matrix(const matrix_t* A, const matrix_t* result) {
-  if (A == NULL || result == NULL) {
-    return S21_ERROR_INCORRECT_MATRIX;
-  }
+int s21_validate_single_matrix(const matrix_t* A) {
+  int status = S21_OK;
   if (!s21_matrix_is_valid(A)) {
-    return S21_ERROR_INCORRECT_MATRIX;
+    status = S21_ERROR_INCORRECT_MATRIX;
   }
-  return S21_OK;
+
+  return status;
 }
 
 double s21_add_helper(double a, double b) {

@@ -1,0 +1,83 @@
+Running suite create_matrix
+tests/test_create_matrix.c:19:P:Core:test_create_matrix_valid:0: Passed
+tests/test_create_matrix.c:31:P:Core:test_create_matrix_zero_rows:0: Passed
+tests/test_create_matrix.c:41:P:Core:test_create_matrix_zero_columns:0: Passed
+tests/test_create_matrix.c:50:P:Core:test_create_matrix_null_result:0: Passed
+tests/test_create_matrix.c:60:P:Core:test_create_matrix_negative_rows:0: Passed
+tests/test_create_matrix.c:70:P:Core:test_create_matrix_negative_columns:0: Passed
+Running suite remove_matrix
+tests/test_remove_matrix.c:22:P:Core:test_remove_matrix_valid:0: Passed
+tests/test_remove_matrix.c:27:P:Core:test_remove_matrix_null_matrix:0: Passed
+tests/test_remove_matrix.c:35:P:Core:test_remove_matrix_already_null:0: Passed
+Running suite eq_matrix
+tests/test_eq_matrix.c:29:P:Core:test_eq_matrix_identical:0: Passed
+tests/test_eq_matrix.c:55:P:Core:test_eq_matrix_different_values:0: Passed
+tests/test_eq_matrix.c:70:P:Core:test_eq_matrix_different_sizes:0: Passed
+tests/test_eq_matrix.c:90:P:Core:test_eq_matrix_null_pointers:0: Passed
+tests/test_eq_matrix.c:115:P:Core:test_eq_matrix_precision:0: Passed
+Running suite sum_matrix
+tests/test_sum_matrix.c:46:P:Core:test_sum_matrix_valid:0: Passed
+tests/test_sum_matrix.c:62:P:Core:test_sum_matrix_different_sizes:0: Passed
+tests/test_sum_matrix.c:76:P:Core:test_sum_matrix_null_A:0: Passed
+tests/test_sum_matrix.c:89:P:Core:test_sum_matrix_null_B:0: Passed
+tests/test_sum_matrix.c:103:P:Core:test_sum_matrix_null_result:0: Passed
+tests/test_sum_matrix.c:132:P:Core:test_sum_matrix_with_zeros:0: Passed
+tests/test_sum_matrix.c:162:P:Core:test_sum_matrix_negative_values:0: Passed
+tests/test_sum_matrix.c:182:P:Core:test_sum_matrix_single_element:0: Passed
+Running suite sub_matrix
+tests/test_sub_matrix.c:33:P:Core:test_sub_matrix_valid:0: Passed
+tests/test_sub_matrix.c:49:P:Core:test_sub_matrix_different_sizes:0: Passed
+tests/test_sub_matrix.c:63:P:Core:test_sub_matrix_null_A:0: Passed
+tests/test_sub_matrix.c:76:P:Core:test_sub_matrix_null_B:0: Passed
+tests/test_sub_matrix.c:90:P:Core:test_sub_matrix_null_result:0: Passed
+tests/test_sub_matrix.c:119:P:Core:test_sub_matrix_negative_result:0: Passed
+tests/test_sub_matrix.c:149:P:Core:test_sub_matrix_zero_result:0: Passed
+Running suite mult_number
+tests/test_mult_number.c:27:P:Core:test_mult_number_valid:0: Passed
+tests/test_mult_number.c:50:P:Core:test_mult_number_by_zero:0: Passed
+tests/test_mult_number.c:73:P:Core:test_mult_number_by_negative:0: Passed
+tests/test_mult_number.c:86:P:Core:test_mult_number_null_A:0: Passed
+tests/test_mult_number.c:97:P:Core:test_mult_number_null_result:0: Passed
+tests/test_mult_number.c:119:P:Core:test_mult_number_by_one:0: Passed
+tests/test_mult_number.c:142:P:Core:test_mult_number_decimal:0: Passed
+Running suite mult_matrix
+tests/test_mult_matrix.c:39:P:Core:test_mult_matrix_valid:0: Passed
+tests/test_mult_matrix.c:55:P:Core:test_mult_matrix_incompatible_sizes:0: Passed
+tests/test_mult_matrix.c:69:P:Core:test_mult_matrix_null_A:0: Passed
+tests/test_mult_matrix.c:82:P:Core:test_mult_matrix_null_B:0: Passed
+tests/test_mult_matrix.c:96:P:Core:test_mult_matrix_null_result:0: Passed
+tests/test_mult_matrix.c:125:P:Core:test_mult_matrix_square:0: Passed
+tests/test_mult_matrix.c:156:P:Core:test_mult_matrix_identity:0: Passed
+Running suite transpose
+tests/test_transpose.c:33:P:Core:test_transpose_valid:0: Passed
+tests/test_transpose.c:56:P:Core:test_transpose_square:0: Passed
+tests/test_transpose.c:73:P:Core:test_transpose_single_element:0: Passed
+tests/test_transpose.c:86:P:Core:test_transpose_null_A:0: Passed
+tests/test_transpose.c:97:P:Core:test_transpose_null_result:0: Passed
+tests/test_transpose.c:119:P:Core:test_transpose_row_vector:0: Passed
+Running suite calc_complements
+tests/test_calc_complements.c:30:P:Core:test_calc_complements_valid:0: Passed
+tests/test_calc_complements.c:55:P:Core:test_calc_complements_2x2:0: Passed
+tests/test_calc_complements.c:69:P:Core:test_calc_complements_non_square:0: Passed
+tests/test_calc_complements.c:81:P:Core:test_calc_complements_null_A:0: Passed
+tests/test_calc_complements.c:92:P:Core:test_calc_complements_null_result:0: Passed
+tests/test_calc_complements.c:107:P:Core:test_calc_complements_1x1:0: Passed
+Running suite determinant
+tests/test_determinant.c:25:P:Core:test_determinant_2x2:0: Passed
+tests/test_determinant.c:50:P:Core:test_determinant_3x3:0: Passed
+tests/test_determinant.c:67:P:Core:test_determinant_1x1:0: Passed
+tests/test_determinant.c:81:P:Core:test_determinant_non_square:0: Passed
+tests/test_determinant.c:93:P:Core:test_determinant_null_A:0: Passed
+tests/test_determinant.c:104:P:Core:test_determinant_null_result:0: Passed
+tests/test_determinant.c:130:P:Core:test_determinant_zero:0: Passed
+tests/test_determinant.c:162:P:Core:test_determinant_4x4:0: Passed
+Running suite inverse_matrix
+tests/test_inverse_matrix.c:25:P:Core:test_inverse_matrix_2x2:0: Passed
+tests/test_inverse_matrix.c:51:P:Core:test_inverse_matrix_3x3:0: Passed
+tests/test_inverse_matrix.c:71:P:Core:test_inverse_matrix_singular:0: Passed
+tests/test_inverse_matrix.c:84:P:Core:test_inverse_matrix_non_square:0: Passed
+tests/test_inverse_matrix.c:96:P:Core:test_inverse_matrix_null_A:0: Passed
+tests/test_inverse_matrix.c:107:P:Core:test_inverse_matrix_null_result:0: Passed
+tests/test_inverse_matrix.c:130:P:Core:test_inverse_matrix_identity:0: Passed
+Results for all suites run:
+100%: Checks: 70, Failures: 0, Errors: 0

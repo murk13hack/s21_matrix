@@ -11,27 +11,25 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_mult_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
-  int status = S21_ERROR_INCORRECT_MATRIX;
+  int status = s21_validate_two_matrices(A, B, result);
 
-  if (A != NULL && B != NULL && result != NULL) {
-    if (s21_matrix_is_valid(A) && s21_matrix_is_valid(B)) {
-      if (s21_matrices_mult_compatible(A, B)) {
-        status = s21_create_matrix(A->rows, B->columns, result);
+  if (status != S21_OK) {
+    return status;
+  }
 
-        if (status == S21_OK) {
-          for (int i = 0; i < A->rows; i++) {
-            for (int j = 0; j < B->columns; j++) {
-              result->matrix[i][j] = 0.0;
+  if (!s21_matrices_mult_compatible(A, B)) {
+    return S21_ERROR_CALCULATION;
+  }
 
-              for (int k = 0; k < A->columns; k++) {
-                result->matrix[i][j] += A->matrix[i][k] * B->matrix[k][j];
-              }
-            }
-          }
-        }
-      } else {
-        status = S21_ERROR_CALCULATION;
-      }
+  status = s21_create_matrix(A->rows, B->columns, result);
+
+  if (status != S21_OK) {
+    return status;
+  }
+
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < B->columns; j++) {
+      result->matrix[i][j] = s21_mult_matrix_element(A, B, i, j);
     }
   }
 

@@ -11,19 +11,21 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_mult_number(matrix_t* A, double number, matrix_t* result) {
-  int status = S21_ERROR_INCORRECT_MATRIX;
+  int status = s21_validate_single_matrix(A, result);
 
-  if (A != NULL && result != NULL) {
-    if (s21_matrix_is_valid(A)) {
-      status = s21_create_matrix(A->rows, A->columns, result);
+  if (status != S21_OK) {
+    return status;
+  }
 
-      if (status == S21_OK) {
-        for (int i = 0; i < A->rows; i++) {
-          for (int j = 0; j < A->columns; j++) {
-            result->matrix[i][j] = A->matrix[i][j] * number;
-          }
-        }
-      }
+  status = s21_create_matrix(A->rows, A->columns, result);
+
+  if (status != S21_OK) {
+    return status;
+  }
+
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < A->columns; j++) {
+      result->matrix[i][j] = A->matrix[i][j] * number;
     }
   }
 

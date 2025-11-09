@@ -49,6 +49,7 @@ MAIN_OBJS = $(patsubst $(SOURCE_DIR)/%.c, $(MAIN_OBJ_DIR)/%.o, $(MAIN_SRC)) \
             $(patsubst $(SOURCE_DIR)/helpers/%.c, $(MAIN_OBJ_DIR)/helpers_%.o, $(HELPERS_SRC))
 MAIN_BIN = $(MAIN_BIN_DIR)/main
 STATIC_LIB = $(LIB_DIR)/s21_matrix.a
+
 # =============================================================================
 # Test Source, Objs list, BIN target
 # =============================================================================
@@ -62,8 +63,8 @@ TEST_BIN = $(TEST_BIN_DIR)/test
 CPPCHECK_FLAGS = --enable=all --inconclusive --std=c11 --language=c \
                  --force --check-config --suppress=missingIncludeSystem \
                  --error-exitcode=1 -I $(INCLUDE_DIR)
-VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-leak-kinds=all \
-                 --track-origins=yes --error-exitcode=1
+VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-leak-kinds=definite,possible \
+                 --error-exitcode=1 #--track-origins=yes 
 
 # =============================================================================
 # Compilation And Linking Of The Main Program

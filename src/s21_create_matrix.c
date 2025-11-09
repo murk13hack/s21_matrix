@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
+#include "helpers/s21_matrix_helpers.h"
 
 /**
  * @brief Create an m by n matrix
@@ -11,7 +12,11 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_create_matrix(int rows, int columns, matrix_t* result) {
-  if (result == NULL || rows <= 0 || columns <= 0) {
+  if (!s21_init_matrix(result)) {
+    return S21_ERROR_INCORRECT_MATRIX;
+  }
+
+  if (rows <= 0 || columns <= 0) {
     return S21_ERROR_INCORRECT_MATRIX;
   }
 

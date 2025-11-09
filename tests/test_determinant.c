@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
 
+// Объявление функций логирования
+void test_start(const char* test_name);
+void test_end(const char* test_name);
+
 // Test suite for s21_determinant function
 START_TEST(test_determinant_2x2) {
+  test_start("test_determinant_2x2");
   matrix_t A;
   double result;
   s21_create_matrix(2, 2, &A);
@@ -20,10 +25,12 @@ START_TEST(test_determinant_2x2) {
   ck_assert_double_eq_tol(result, -2.0, 1e-7);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_2x2");
 }
 END_TEST
 
 START_TEST(test_determinant_3x3) {
+  test_start("test_determinant_3x3");
   matrix_t A;
   double result;
   s21_create_matrix(3, 3, &A);
@@ -43,10 +50,12 @@ START_TEST(test_determinant_3x3) {
   ck_assert_double_eq_tol(result, 0.0, 1e-7);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_3x3");
 }
 END_TEST
 
 START_TEST(test_determinant_1x1) {
+  test_start("test_determinant_1x1");
   matrix_t A;
   double result;
   s21_create_matrix(1, 1, &A);
@@ -58,10 +67,12 @@ START_TEST(test_determinant_1x1) {
   ck_assert_double_eq_tol(result, 5.0, 1e-7);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_1x1");
 }
 END_TEST
 
 START_TEST(test_determinant_non_square) {
+  test_start("test_determinant_non_square");
   matrix_t A;
   double result;
   s21_create_matrix(2, 3, &A);
@@ -70,18 +81,22 @@ START_TEST(test_determinant_non_square) {
   ck_assert_int_eq(status, S21_ERROR_CALCULATION);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_non_square");
 }
 END_TEST
 
 START_TEST(test_determinant_null_A) {
+  test_start("test_determinant_null_A");
   double result;
 
   int status = s21_determinant(NULL, &result);
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
+  test_end("test_determinant_null_A");
 }
 END_TEST
 
 START_TEST(test_determinant_null_result) {
+  test_start("test_determinant_null_result");
   matrix_t A;
   s21_create_matrix(2, 2, &A);
 
@@ -89,10 +104,12 @@ START_TEST(test_determinant_null_result) {
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_null_result");
 }
 END_TEST
 
 START_TEST(test_determinant_zero) {
+  test_start("test_determinant_zero");
   matrix_t A;
   double result;
   s21_create_matrix(3, 3, &A);
@@ -113,10 +130,12 @@ START_TEST(test_determinant_zero) {
   ck_assert_double_eq_tol(result, 0.0, 1e-7);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_zero");
 }
 END_TEST
 
 START_TEST(test_determinant_4x4) {
+  test_start("test_determinant_4x4");
   matrix_t A;
   double result;
   s21_create_matrix(4, 4, &A);
@@ -143,6 +162,7 @@ START_TEST(test_determinant_4x4) {
   ck_assert_double_eq_tol(result, 24.0, 1e-7);
 
   s21_remove_matrix(&A);
+  test_end("test_determinant_4x4");
 }
 END_TEST
 

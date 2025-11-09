@@ -11,7 +11,11 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_sum_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
-  int status = s21_validate_two_matrices(A, B, result);
+  if (!s21_init_matrix(result)) {
+    return S21_ERROR_INCORRECT_MATRIX;
+  }
+
+  int status = s21_validate_two_matrices(A, B);
 
   if (status != S21_OK)
     return status;

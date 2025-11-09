@@ -3,8 +3,13 @@
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
 
+// Объявление функций логирования
+void test_start(const char* test_name);
+void test_end(const char* test_name);
+
 // Test suite for s21_eq_matrix function
 START_TEST(test_eq_matrix_identical) {
+  test_start("test_eq_matrix_identical");
   matrix_t A, B;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -25,10 +30,12 @@ START_TEST(test_eq_matrix_identical) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_eq_matrix_identical");
 }
 END_TEST
 
 START_TEST(test_eq_matrix_different_values) {
+  test_start("test_eq_matrix_different_values");
   matrix_t A, B;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -49,10 +56,12 @@ START_TEST(test_eq_matrix_different_values) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_eq_matrix_different_values");
 }
 END_TEST
 
 START_TEST(test_eq_matrix_different_sizes) {
+  test_start("test_eq_matrix_different_sizes");
   matrix_t A, B;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 3, &B);
@@ -62,10 +71,12 @@ START_TEST(test_eq_matrix_different_sizes) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_eq_matrix_different_sizes");
 }
 END_TEST
 
 START_TEST(test_eq_matrix_null_pointers) {
+  test_start("test_eq_matrix_null_pointers");
   matrix_t A;
   s21_create_matrix(2, 2, &A);
 
@@ -79,10 +90,12 @@ START_TEST(test_eq_matrix_null_pointers) {
   ck_assert_int_eq(result, FAILURE);
 
   s21_remove_matrix(&A);
+  test_end("test_eq_matrix_null_pointers");
 }
 END_TEST
 
 START_TEST(test_eq_matrix_precision) {
+  test_start("test_eq_matrix_precision");
   matrix_t A, B;
   s21_create_matrix(1, 1, &A);
   s21_create_matrix(1, 1, &B);
@@ -103,6 +116,7 @@ START_TEST(test_eq_matrix_precision) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_eq_matrix_precision");
 }
 END_TEST
 

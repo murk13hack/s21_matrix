@@ -19,6 +19,19 @@
 int s21_matrix_is_valid(const matrix_t* A);
 
 /**
+ * @brief Initializes matrix structure with safe default values
+ *
+ * Sets matrix fields to zero/initial values:
+ * - matrix = NULL
+ * - rows = 0
+ * - columns = 0
+ *
+ * @param result Pointer to matrix_t structure to initialize
+ * @return 1 if success, 0 if error (result is NULL)
+ */
+int s21_init_matrix(matrix_t* result);
+
+/**
  * @brief Check if matrices have compatible dimensions for addition/subtraction
  * @param A Pointer to the first matrix
  * @param B Pointer to the second matrix
@@ -94,22 +107,19 @@ int s21_calculate_inverse_step(matrix_t* A, double det, matrix_t* result);
  * @brief Validate input matrices for binary operations (sum, sub, mult)
  * @param A Pointer to the first matrix (must be valid and not NULL)
  * @param B Pointer to the second matrix (must be valid and not NULL)
- * @param result Pointer to result matrix (must be not NULL)
  * @return S21_OK if all matrices are valid, S21_ERROR_INCORRECT_MATRIX
  * otherwise
  */
-int s21_validate_two_matrices(const matrix_t* A, const matrix_t* B,
-                              const matrix_t* result);
+int s21_validate_two_matrices(const matrix_t* A, const matrix_t* B);
 
 /**
  * @brief Validate input matrix for unary operations (transpose, determinant,
  * etc.)
  * @param A Pointer to the source matrix (must be valid and not NULL)
- * @param result Pointer to result matrix (must be not NULL)
  * @return S21_OK if matrix and result are valid, S21_ERROR_INCORRECT_MATRIX
  * otherwise
  */
-int s21_validate_single_matrix(const matrix_t* A, const matrix_t* result);
+int s21_validate_single_matrix(const matrix_t* A);
 
 /**
  * @brief Apply binary operation element-wise to two matrices

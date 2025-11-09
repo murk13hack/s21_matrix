@@ -10,7 +10,11 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_transpose(matrix_t* A, matrix_t* result) {
-  int status = s21_validate_single_matrix(A, result);
+  if (!s21_init_matrix(result)) {
+    return S21_ERROR_INCORRECT_MATRIX;
+  }
+
+  int status = s21_validate_single_matrix(A);
   if (status != S21_OK)
     return status;
 

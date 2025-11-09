@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include "../include/s21_matrix.h"
 
+// Объявление функций логирования
+void test_start(const char* test_name);
+void test_end(const char* test_name);
+
 // Test suite for s21_sub_matrix function
 START_TEST(test_sub_matrix_valid) {
+  test_start("test_sub_matrix_valid");
   matrix_t A, B, result;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -30,10 +35,12 @@ START_TEST(test_sub_matrix_valid) {
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
   s21_remove_matrix(&result);
+  test_end("test_sub_matrix_valid");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_different_sizes) {
+  test_start("test_sub_matrix_different_sizes");
   matrix_t A, B, result;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 3, &B);
@@ -43,10 +50,12 @@ START_TEST(test_sub_matrix_different_sizes) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_sub_matrix_different_sizes");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_null_A) {
+  test_start("test_sub_matrix_null_A");
   matrix_t B, result;
   s21_create_matrix(2, 2, &B);
 
@@ -54,10 +63,12 @@ START_TEST(test_sub_matrix_null_A) {
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
 
   s21_remove_matrix(&B);
+  test_end("test_sub_matrix_null_A");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_null_B) {
+  test_start("test_sub_matrix_null_B");
   matrix_t A, result;
   s21_create_matrix(2, 2, &A);
 
@@ -65,10 +76,12 @@ START_TEST(test_sub_matrix_null_B) {
   ck_assert_int_eq(status, S21_ERROR_INCORRECT_MATRIX);
 
   s21_remove_matrix(&A);
+  test_end("test_sub_matrix_null_B");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_null_result) {
+  test_start("test_sub_matrix_null_result");
   matrix_t A, B;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -78,10 +91,12 @@ START_TEST(test_sub_matrix_null_result) {
 
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
+  test_end("test_sub_matrix_null_result");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_negative_result) {
+  test_start("test_sub_matrix_negative_result");
   matrix_t A, B, result;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -106,10 +121,12 @@ START_TEST(test_sub_matrix_negative_result) {
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
   s21_remove_matrix(&result);
+  test_end("test_sub_matrix_negative_result");
 }
 END_TEST
 
 START_TEST(test_sub_matrix_zero_result) {
+  test_start("test_sub_matrix_zero_result");
   matrix_t A, B, result;
   s21_create_matrix(2, 2, &A);
   s21_create_matrix(2, 2, &B);
@@ -134,6 +151,7 @@ START_TEST(test_sub_matrix_zero_result) {
   s21_remove_matrix(&A);
   s21_remove_matrix(&B);
   s21_remove_matrix(&result);
+  test_end("test_sub_matrix_zero_result");
 }
 END_TEST
 

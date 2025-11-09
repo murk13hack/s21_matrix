@@ -168,8 +168,7 @@ double s21_mult_matrix_element(const matrix_t* A, const matrix_t* B, int row,
   return result;
 }
 
-int s21_calculate_inverse_step(matrix_t* A, double det,
-                               matrix_t* result) {
+int s21_calculate_inverse_step(matrix_t* A, double det, matrix_t* result) {
   if (!s21_matrix_is_valid(A) || result == NULL) {
     return S21_ERROR_INCORRECT_MATRIX;
   }

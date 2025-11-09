@@ -10,7 +10,6 @@
  * @return Error code: `1` (SUCCESS), `0` (FAILURE)
  */
 int s21_eq_matrix(const matrix_t* A, const matrix_t* B) {
-  
   if (!s21_matrix_is_valid(A) || !s21_matrix_is_valid(B)) {
     return FAILURE;
   }

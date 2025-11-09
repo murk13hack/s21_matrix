@@ -11,7 +11,6 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_sum_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
-  
   if (!s21_init_matrix(result)) {
     return S21_ERROR_INCORRECT_MATRIX;
   }

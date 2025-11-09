@@ -15,20 +15,20 @@ Suite* determinant_suite(void);
 Suite* inverse_matrix_suite(void);
 
 void test_start(const char* test_name) {
-    printf("▶ START: %s\n", test_name);
-    fflush(stdout);
+  printf("START: %s\n", test_name);
+  fflush(stdout);
 }
 
 void test_end(const char* test_name) {
-    printf("✓ END: %s\n\n", test_name);
-    fflush(stdout);
+  printf("END: %s\n\n", test_name);
+  fflush(stdout);
 }
 
 int main(void) {
   int number_failed;
   SRunner* sr;
 
-  printf("🚀 Starting test execution...\n");
+  printf("Starting test execution...\n");
   printf("==============================\n\n");
 
   sr = srunner_create(NULL);
@@ -47,21 +47,21 @@ int main(void) {
 
   srunner_set_log(sr, "test_log.txt");
 
-  printf("📊 Running tests...\n");
+  printf("Running tests...\n");
   printf("==============================\n\n");
 
   srunner_run_all(sr, CK_NORMAL);
-  
+
   printf("==============================\n");
-  printf("📋 Test execution completed\n");
+  printf("Test execution completed\n");
 
   number_failed = srunner_ntests_failed(sr);
   srunner_free(sr);
 
   if (number_failed == 0) {
-    printf("✅ ALL TESTS PASSED\n");
+    printf("ALL TESTS PASSED\n");
   } else {
-    printf("❌ %d TEST(S) FAILED\n", number_failed);
+    printf("%d TEST(S) FAILED\n", number_failed);
   }
 
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;

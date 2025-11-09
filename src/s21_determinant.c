@@ -10,7 +10,6 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_determinant(matrix_t* A, double* result) {
-
   if (!result) {
     return S21_ERROR_INCORRECT_MATRIX;
   }

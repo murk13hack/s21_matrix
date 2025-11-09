@@ -15,27 +15,24 @@ int s21_create_matrix(int rows, int columns, matrix_t* result) {
     return S21_ERROR_INCORRECT_MATRIX;
   }
 
-  result->rows = rows;
-  result->columns = columns;
-  result->matrix = (double**)calloc(rows, sizeof(double*));
+  result->rows = 0;
+  result->columns = 0;
+  result->matrix = NULL;
 
+  result->matrix = (double**)calloc(rows, sizeof(double*));
   if (result->matrix == NULL) {
     return S21_ERROR_CALCULATION;
   }
 
   int i = 0;
-  int alloc_failed = 0;
-
-  while (i < rows && !alloc_failed) {
+  for (i = 0; i < rows; i++) {
     result->matrix[i] = (double*)calloc(columns, sizeof(double));
     if (result->matrix[i] == NULL) {
-      alloc_failed = 1;
-    } else {
-      i++;
+      break;
     }
   }
 
-  if (alloc_failed) {
+  if (i < rows) {
     for (int j = 0; j < i; j++) {
       free(result->matrix[j]);
     }
@@ -44,5 +41,7 @@ int s21_create_matrix(int rows, int columns, matrix_t* result) {
     return S21_ERROR_CALCULATION;
   }
 
+  result->rows = rows;
+  result->columns = columns;
   return S21_OK;
 }

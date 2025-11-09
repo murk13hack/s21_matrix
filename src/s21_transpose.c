@@ -10,28 +10,19 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_transpose(matrix_t* A, matrix_t* result) {
-  int status = s21_validate_input_matrices(A, NULL, result);
-
-  if (status != S21_OK) {
+  int status = s21_validate_single_matrix(A, result);
+  if (status != S21_OK)
     return status;
-  }
 
   status = s21_create_matrix(A->columns, A->rows, result);
-
-  if (status != S21_OK) {
+  if (status != S21_OK)
     return status;
-  }
 
-  int i = 0;
-
-  while (i < A->rows) {
-    int j = 0;
-    while (j < A->columns) {
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < A->columns; j++) {
       result->matrix[j][i] = A->matrix[i][j];
-      j++;
     }
-    i++;
   }
 
-  return status;
+  return S21_OK;
 }

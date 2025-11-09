@@ -11,7 +11,7 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_inverse_matrix(matrix_t* A, matrix_t* result) {
-  int status = s21_validate_input_matrices(A, NULL, result);
+  int status = s21_validate_single_matrix(A, result);
 
   if (status != S21_OK) {
     return status;
@@ -28,7 +28,7 @@ int s21_inverse_matrix(matrix_t* A, matrix_t* result) {
     return status;
   }
 
-  if (fabs(det) <= 1e-6) {
+  if (fabs(det) < DETERMINANT_EPSILON) {
     return S21_ERROR_CALCULATION;
   }
 

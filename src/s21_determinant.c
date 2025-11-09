@@ -10,11 +10,13 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_determinant(matrix_t* A, double* result) {
-  int status = S21_ERROR_INCORRECT_MATRIX;
-
-  if (A != NULL && result != NULL) {
-    status = s21_determinant_recursive(A, result);
+  if (!s21_matrix_is_valid(A) || result == NULL) {
+    return S21_ERROR_INCORRECT_MATRIX;
   }
 
-  return status;
+  if (!s21_matrix_is_square(A)) {
+    return S21_ERROR_CALCULATION;
+  }
+
+  return s21_determinant_recursive(A, result);
 }

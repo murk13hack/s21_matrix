@@ -6,6 +6,8 @@
 #ifndef S21_MATRIX_HELPERS_H
 #define S21_MATRIX_HELPERS_H
 
+#define DETERMINANT_EPSILON 1e-12
+
 #include "../include/s21_matrix.h"
 
 /**
@@ -77,7 +79,7 @@ int s21_calc_complement_element(const matrix_t* A, int row, int col,
  * @return Calculated value
  */
 double s21_mult_matrix_element(const matrix_t* A, const matrix_t* B, int row,
-                                int col);
+                               int col);
 
 /**
  * @brief Calculate inverse matrix step by step
@@ -86,18 +88,28 @@ double s21_mult_matrix_element(const matrix_t* A, const matrix_t* B, int row,
  * @param result Pointer to store the result
  * @return Error code
  */
-int s21_calculate_inverse_step(const matrix_t* A, double det,
-                                matrix_t* result);
+int s21_calculate_inverse_step(matrix_t* A, double det, matrix_t* result);
 
 /**
- * @brief Validate input matrices for binary operations
- * @param A Pointer to the first matrix
- * @param B Pointer to the second matrix (can be NULL for unary operations)
- * @param result Pointer to result matrix
- * @return Error code: 0 (OK) or error code
+ * @brief Validate input matrices for binary operations (sum, sub, mult)
+ * @param A Pointer to the first matrix (must be valid and not NULL)
+ * @param B Pointer to the second matrix (must be valid and not NULL)
+ * @param result Pointer to result matrix (must be not NULL)
+ * @return S21_OK if all matrices are valid, S21_ERROR_INCORRECT_MATRIX
+ * otherwise
  */
-int s21_validate_input_matrices(const matrix_t* A, const matrix_t* B,
-                                 const matrix_t* result);
+int s21_validate_two_matrices(const matrix_t* A, const matrix_t* B,
+                              const matrix_t* result);
+
+/**
+ * @brief Validate input matrix for unary operations (transpose, determinant,
+ * etc.)
+ * @param A Pointer to the source matrix (must be valid and not NULL)
+ * @param result Pointer to result matrix (must be not NULL)
+ * @return S21_OK if matrix and result are valid, S21_ERROR_INCORRECT_MATRIX
+ * otherwise
+ */
+int s21_validate_single_matrix(const matrix_t* A, const matrix_t* result);
 
 /**
  * @brief Apply binary operation element-wise to two matrices
@@ -108,12 +120,31 @@ int s21_validate_input_matrices(const matrix_t* A, const matrix_t* B,
  * @return Error code
  */
 int s21_apply_binary_operation(const matrix_t* A, const matrix_t* B,
-                                matrix_t* result, double (*operation)(double, double));
+                               matrix_t* result,
+                               double (*operation)(double, double));
 
 /**
  * @brief Helper functions for binary operations (internal use)
  */
 double s21_add_helper(double a, double b);
 double s21_sub_helper(double a, double b);
+
+/**
+ * @brief Validate matrix indices are within bounds
+ * @param A Pointer to the matrix to check
+ * @param row Row index to validate
+ * @param col Column index to validate
+ * @return 1 if 0 <= row < rows and 0 <= col < columns, 0 otherwise
+ */
+int hfh_within_bounds(const matrix_t* A, int row, int col);
+
+/**
+ * @brief Compute sign factor for algebraic complement calculation
+ * @details Implements formula: sign = (-1)^(row + col)
+ * @param row Row index (0-based)
+ * @param col Column index (0-based)
+ * @return 1 when (row + col) is even, -1 when odd
+ */
+int hfh_calculate_complement_sign(int row, int col);
 
 #endif  // S21_MATRIX_HELPERS_H

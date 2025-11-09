@@ -10,44 +10,30 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_calc_complements(matrix_t* A, matrix_t* result) {
-  int status = s21_validate_input_matrices(A, NULL, result);
-
-  if (status != S21_OK) {
+  int status = s21_validate_single_matrix(A, result);
+  if (status != S21_OK)
     return status;
-  }
 
   if (!s21_matrix_is_square(A) || A->rows <= 1) {
     return S21_ERROR_CALCULATION;
   }
 
   status = s21_create_matrix(A->rows, A->columns, result);
-
-  if (status != S21_OK) {
+  if (status != S21_OK)
     return status;
-  }
 
-  int i = 0;
-  int j = 0;
-  int calc_status = S21_OK;
-
-  while (i < A->rows && calc_status == S21_OK) {
-    j = 0;
-    while (j < A->columns && calc_status == S21_OK) {
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < A->columns; j++) {
       double element = 0.0;
-      calc_status = s21_calc_complement_element(A, i, j, &element);
+      status = s21_calc_complement_element(A, i, j, &element);
 
-      if (calc_status == S21_OK) {
-        result->matrix[i][j] = element;
+      if (status != S21_OK) {
+        s21_remove_matrix(result);
+        return status;
       }
-      j++;
+
+      result->matrix[i][j] = element;
     }
-    i++;
   }
-
-  if (calc_status != S21_OK) {
-    s21_remove_matrix(result);
-    status = calc_status;
-  }
-
-  return status;
+  return S21_OK;
 }

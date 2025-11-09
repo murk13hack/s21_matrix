@@ -11,5 +11,14 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_sub_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
+  int status = s21_validate_two_matrices(A, B, result);
+
+  if (status != S21_OK)
+    return status;
+
+  if (!s21_matrices_same_size(A, B)) {
+    return S21_ERROR_CALCULATION;
+  }
+
   return s21_apply_binary_operation(A, B, result, s21_sub_helper);
 }

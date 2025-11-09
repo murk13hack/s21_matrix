@@ -11,7 +11,7 @@
  * (S21_ERROR_CALCULATION)
  */
 int s21_mult_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
-  int status = s21_validate_input_matrices(A, B, result);
+  int status = s21_validate_two_matrices(A, B, result);
 
   if (status != S21_OK) {
     return status;
@@ -27,15 +27,10 @@ int s21_mult_matrix(matrix_t* A, matrix_t* B, matrix_t* result) {
     return status;
   }
 
-  int i = 0;
-
-  while (i < A->rows) {
-    int j = 0;
-    while (j < B->columns) {
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < B->columns; j++) {
       result->matrix[i][j] = s21_mult_matrix_element(A, B, i, j);
-      j++;
     }
-    i++;
   }
 
   return status;

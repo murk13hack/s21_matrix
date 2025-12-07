@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "../include/s21_matrix.h"
 
 // Объявление функций логирования
@@ -10,12 +11,10 @@ void test_end(const char* test_name);
 
 // Helper function to check if two matrices are approximately equal
 int matrices_equal(const matrix_t* A, const matrix_t* B, double tolerance) {
-  if (A->rows != B->rows || A->columns != B->columns)
-    return 0;
+  if (A->rows != B->rows || A->columns != B->columns) return 0;
   for (int i = 0; i < A->rows; i++) {
     for (int j = 0; j < A->columns; j++) {
-      if (fabs(A->matrix[i][j] - B->matrix[i][j]) > tolerance)
-        return 0;
+      if (fabs(A->matrix[i][j] - B->matrix[i][j]) > tolerance) return 0;
     }
   }
   return 1;

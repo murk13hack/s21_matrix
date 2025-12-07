@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "../include/s21_matrix.h"
 
 // Объявление функций логирования
